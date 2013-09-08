@@ -62,6 +62,7 @@ class Deploy {
 		if($this->delete() || $this->post()) {
 			return $this->commit();
 		}
+		return false;
 	}
 
 
