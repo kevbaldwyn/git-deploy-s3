@@ -1,8 +1,9 @@
 <?php namespace KevBaldwyn\GitDeploy\Providers;
 
-use KevBaldwyn\GitDeploy\Interfaces\Cli;
+use KevBaldwyn\GitDeploy\Cli as GitDeployCli;
+use KevBaldwyn\GitDeploy\Interfaces\CliInterface;
 
-class ArtisanCli implements CliInterface {
+class ArtisanCli extends GitDeployCli implements CliInterface {
 
 	public function getRevisions() 
 	{

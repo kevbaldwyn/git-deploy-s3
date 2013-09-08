@@ -1,8 +1,9 @@
 <?php namespace KevBaldwyn\GitDeploy\Providers;
 
-use KevBaldwyn\GitDeploy\Interfaces\Cli;
+use KevBaldwyn\GitDeploy\Cli as GitDeployCli;
+use KevBaldwyn\GitDeploy\Interfaces\CliInterface;
 
-class FuelCli implements CliInterface {
+class FuelCli extends GitDeployCli implements CliInterface {
 
 	public function getRevisions() 
 	{
