@@ -8,6 +8,7 @@ class Deploy {
 	private $oldRevision;
 	private $newRevision;
 	private $cli;
+	private $storage;
 
 	private $diffRaw;
 	private $diff;
@@ -15,11 +16,13 @@ class Deploy {
 	private $paths = array();
 
 
-	public function __construct(CliInterface $cli, array $paths) 
+	public function __construct(CliInterface $cli, array $paths, BatchStorageInterface $storage) 
 	{
-		$this->cli = $cli;
+		$this->cli     = $cli;
+		$this->storage = $storage;
+		$this->paths   = $paths;
+
 		$this->getRevisions();
-		$this->paths = $paths;
 		$this->diff = $this->getDiff();
 
 	}
@@ -29,9 +32,12 @@ class Deploy {
 	public function post() 
 	{
 		if(count($this->diff['upload']) > 0) {
-			
+			foreach($this->diff['upload'] as $localPath => $uploadPath) {
+				$this->storage->createObject($localPath, $uploadPath);
+			}
+			return true;
 		}else{
-			$this->cli->info('No files to upload.');
+			throw new \Exception('No Files to upload');
 		}
 	}
 
@@ -39,7 +45,14 @@ class Deploy {
 	// git-s3-deploy delete <oldrev> <newrev>
 	public function delete() 
 	{
-		
+		if(count($this->diff['delete']) > 0) {
+			foreach($this->diff['delete'] as $localPath => $uploadPath) {
+				$this->storage->deleteObject($localPath, $uploadPath);
+			}
+			return true;
+		}else{
+			throw new \Exception('No Files to delete');
+		}
 	}
 
 
@@ -48,6 +61,26 @@ class Deploy {
 	{
 		$this->delete();
 		$this->post();
+	}
+
+
+	public function commit() 
+	{
+		$success = false;
+		try {
+			$this->storage->send();
+
+			$success = $this->storage->successful();
+			$msg     = $this->storage->getResponseMessage();
+		}catch(\Exception $e) {
+			$msg = $e->getMessage();
+		}
+
+		if(!$success) {
+			throw new \Exception($msg);
+		}
+
+		return true;
 	}
 
 
