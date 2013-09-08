@@ -37,7 +37,7 @@ class Deploy {
 			}
 			return true;
 		}else{
-			throw new \Exception('No Files to upload');
+			return false;
 		}
 	}
 
@@ -51,7 +51,7 @@ class Deploy {
 			}
 			return true;
 		}else{
-			throw new \Exception('No Files to delete');
+			return false;
 		}
 	}
 
@@ -59,8 +59,9 @@ class Deploy {
 	// git-s3-deploy sync <oldrev> <newrev>
 	public function snyc() 
 	{
-		$this->delete();
-		$this->post();
+		if($this->delete() || $this->post()) {
+			return $this->commit();
+		}
 	}
 
 
@@ -97,7 +98,7 @@ class Deploy {
 	{
 		$cmdOutput = $this->cli->diff($this->oldRevision, $this->newRevision);
 	
-		if (!$cmdOutput) {
+		if (is_null($cmdOutput)) {
 			throw new \Exception('There was a problem executing the command.');
 		}
 

@@ -36,13 +36,10 @@ D       assets/css/lib/new.css";
 	}
 
 
-	/**
-	 * @expectedException Exception
-	 */
-	public function test_postThrowsExceptionWithoutFiles() 
+	public function test_postReturnsFalseWithoutFiles() 
 	{
-		$deploy = new Deploy(static::mockCli(), $this->paths, static::mockStorage());
-		$deploy->post();
+		$deploy = new Deploy(static::mockCli(), array('upload' => array(), 'delete' => array()), static::mockStorage());
+		$this->assertFalse($deploy->post());
 	}
 
 
@@ -56,13 +53,10 @@ D       assets/css/lib/new.css";
 	}
 
 
-	/**
-	 * @expectedException Exception
-	 */
-	public function test_deleteThrowsExceptionWithoutFiles() 
+	public function test_deleteReturnsFalseWithoutFiles() 
 	{
-		$deploy = new Deploy(static::mockCli(), $this->paths, static::mockStorage());
-		$deploy->delete();
+		$deploy = new Deploy(static::mockCli(), array('upload' => array(), 'delete' => array()), static::mockStorage());
+		$this->assertFalse($deploy->delete());
 	}
 
 
@@ -89,12 +83,13 @@ D       assets/css/lib/new.css";
 	}
 
 
-	public function test_commitreturnsTrueOnSuccess() {
+	public function test_commitReturnsTrueOnSuccess() {
 		$storage = static::mockStorageWithSendSuccess();
 
 		$deploy = new Deploy(static::mockCli($this->diffCmdResult), $this->paths, $storage);
 		$this->assertTrue($deploy->commit());
 	}
+
 
 
 
