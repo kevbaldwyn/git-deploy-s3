@@ -46,7 +46,7 @@ class S3Storage implements BatchStorageInterface {
 	{
 		//store the data for the sync builder
 		$path = static::parseBucket($remote);
-		$this->upload[$path[0]][] = $local;
+		$this->upload[$path[0]][] = new \SplFileInfo($local);
 	}
 
 
@@ -54,7 +54,6 @@ class S3Storage implements BatchStorageInterface {
 	{
 		// loop over the buckets
 		foreach($this->upload as $bucket => $files) {
-				
 			UploadSyncBuilder::getInstance()
 							    ->setClient($this->client)
 							    ->setBucket($bucket)
@@ -85,12 +84,12 @@ class S3Storage implements BatchStorageInterface {
 
 	public function getResponse()
 	{
-		
+
 	}
 
 	public function getResponseMessage()
 	{
-		
+
 	}
 
 
