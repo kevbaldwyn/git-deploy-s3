@@ -23,7 +23,7 @@ D       assets/css/lib/new.css";
 		// mock the Cli
 		$this->cli = m::mock('KevBaldwyn\GitDeploy\CliInterface');
 		$this->cli->shouldReceive('diff')
-					->withAnyArgs()
+					->with('hash1', 'hash2')
 					->andReturn($this->diffCmdResult);
 		$this->cli->shouldReceive('getRevisions')
 					->withAnyArgs()
