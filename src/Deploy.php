@@ -14,6 +14,7 @@ class Deploy {
 	private $diff;
 
 	private $paths = array();
+	private $baseDir = '';
 
 
 	public function __construct(CliInterface $cli, array $paths, BatchStorageInterface $storage) 
@@ -27,13 +28,21 @@ class Deploy {
 
 	}
 
+	
+	public function setBaseDir($baseDir) 
+	{
+		$this->baseDir = $baseDir;
+		$this->storage->setBaseDir($baseDir);
+	}
+	
+
 
 	// git-s3-deploy post <oldrev> <newrev>
 	public function post() 
 	{
 		if(count($this->diff['upload']) > 0) {
 			foreach($this->diff['upload'] as $localPath => $uploadPath) {
-				$this->storage->createObject($localPath, $uploadPath);
+				$this->storage->createObject($this->baseDir . $localPath, $uploadPath);
 			}
 			return true;
 		}else{
@@ -47,7 +56,7 @@ class Deploy {
 	{
 		if(count($this->diff['delete']) > 0) {
 			foreach($this->diff['delete'] as $localPath => $uploadPath) {
-				$this->storage->deleteObject($localPath, $uploadPath);
+				$this->storage->deleteObject($this->baseDir . $localPath, $uploadPath);
 			}
 			return true;
 		}else{
@@ -70,6 +79,7 @@ class Deploy {
 	{
 		$success = false;
 		try {
+			//$this->storage->setLocalPaths($this->paths, $this->baseDir);
 			$this->storage->send();
 
 			$success = $this->storage->successful();

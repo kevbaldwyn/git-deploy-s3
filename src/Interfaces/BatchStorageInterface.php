@@ -4,6 +4,8 @@ interface BatchStorageInterface {
 
 	public function setUp(array $credentials);
 
+	public function setBaseDir($baseDir);
+
 	public function deleteObject($local, $remote);
 
 	public function createObject($local, $remote);

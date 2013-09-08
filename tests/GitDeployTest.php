@@ -21,8 +21,12 @@ D       assets/css/lib/new.css";
 	{
 		$deploy = new Deploy(static::mockCli($this->diffCmdResult), $this->paths, static::mockStorage());
 		$diff = $deploy->getDiff();
+
 		$this->assertEquals(3, count($diff['delete']));
 		$this->assertEquals(2, count($diff['upload']));
+
+		$this->assertSame('assets/js/general.js', key($diff['upload']));
+		$this->assertSame('assets-bucket/js/general.js', reset($diff['upload']));
 	}
 
 
@@ -109,7 +113,8 @@ D       assets/css/lib/new.css";
 
 
 	private static function mockStorage() {
-		return m::mock('KevBaldwyn\GitDeploy\BatchStorageInterface');
+		$m = m::mock('KevBaldwyn\GitDeploy\BatchStorageInterface');
+		return $m;
 	}
 
 
