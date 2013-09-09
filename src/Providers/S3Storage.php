@@ -4,6 +4,7 @@ use KevBaldwyn\GitDeploy\Interfaces\BatchStorageInterface;
 use Aws\S3\S3Client;
 use Aws\S3\Enum\CannedAcl as AWSPerm;
 use Aws\S3\Sync\UploadSyncBuilder;
+use Aws\S3\Model\DeleteObjectsBatch;
 
 use ArrayIterator;
 
@@ -39,7 +40,8 @@ class S3Storage implements BatchStorageInterface {
 
 	public function deleteObject($local, $remote)
 	{
-
+		$path = static::parseBucket($remote);
+		$this->delete[$path[0]][] = $local;
 	}
 
 	public function createObject($local, $remote) 
@@ -59,12 +61,22 @@ class S3Storage implements BatchStorageInterface {
 							    ->setBucket($bucket)
 							    ->setBaseDir($this->baseDir)
 							    ->setAcl(AWSPerm::PUBLIC_READ)
-								
 							    ->setSourceIterator(new ArrayIterator($files)) 
-
 							    ->build()
 							    ->transfer();
 				
+		}
+	}
+
+
+	public function batchDelete()
+	{
+		foreach($this->delete as $bucket => $files) {
+			$delete = DeleteObjectsBatch::factory($this->client, $bucket);
+			foreach($files as $file) {
+				$delete->addKey($file);
+			}
+			$delete->flush();
 		}
 	}
 
