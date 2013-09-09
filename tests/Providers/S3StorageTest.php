@@ -24,7 +24,7 @@ class S3StorageTest extends \PHPUnit_Framework_TestCase {
 		$s3 = new S3Storage(array('key'    => $this->s3Key,
 								  'secret' => $this->s3Secret));
 
-		$path = __DIR__ . '/../../';
+		$path = __DIR__ . '/../../tests/';
 
 		$s3->setBaseDir($path);
 		$s3->createObject($path . 'test-assets/css/1.css', $this->bucketName . '/css/1.css');
@@ -44,7 +44,7 @@ class S3StorageTest extends \PHPUnit_Framework_TestCase {
 		$s3 = new S3Storage(array('key'    => $this->s3Key,
 								  'secret' => $this->s3Secret));
 
-		$path = __DIR__ . '/../../';
+		$path = __DIR__ . '/../../tests/';
 
 		$s3->setBaseDir($path);
 		$s3->deleteObject('test-assets/css/1.css', $this->bucketName . '/css/1.css');
@@ -62,7 +62,7 @@ class S3StorageTest extends \PHPUnit_Framework_TestCase {
 		$s3 = new S3Storage(array('key'    => $this->s3Key,
 								  'secret' => $this->s3Secret));
 
-		$path = __DIR__ . '/../../';
+		$path = __DIR__ . '/../../tests/';
 
 		$s3->setBaseDir($path);
 		$s3->deleteObject('test-assets/css/1.css', $this->bucketName . '/css/1.css');
