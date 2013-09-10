@@ -10,11 +10,5 @@ class ArtisanCli extends GitDeployCli implements CliInterface {
 		
 	}
 
-	public function info() {}
-
-	public function warn() {}
-
-	public function error() {}
-
 }
 
