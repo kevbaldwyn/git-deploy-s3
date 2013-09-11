@@ -28,8 +28,7 @@ class Phng {
 	private $baseDir;
 	private $paths;
 
-	private $key;
-	private $secret;
+	private $credentials;
 
 
 	public function setOldRevision($v) {
@@ -47,14 +46,15 @@ class Phng {
 	}
 
 
-	public function setS3Key($v) {
-		$this->key = $v;
+	/**
+	 * <property name="credntials[key]" value="12345" />
+	 * <property name="credntials[secret]" value="123456789" />
+	 * <taskname credntials="${credntials}" />
+	 */
+	public function setCredentials($v) {
+		$this->credentials = $v;
 	}
 
-
-	public function setS3Secret($v) {
-		$this->secret = $v;
-	}
 
 	/**
 	 * <property name="paths[local]" value="remote" />
@@ -74,13 +74,18 @@ class Phng {
 			throw new BuildException("You must specify the base dir for the files", $this->getLocation());
 		}
 
-		$deploy = new Deploy(new AutomatedCli($this->oldRevision, $this->newRevision), 
-							 $this->paths, 
-							 new KevBaldwyn\GitDeploy\Providers\S3Storage(array('key' => $this->key, 'secret' => $this->secret)));
+		try {
+			$deploy = new Deploy(new AutomatedCli($this->oldRevision, $this->newRevision), 
+								 $this->paths, 
+								 new KevBaldwyn\GitDeploy\Providers\S3Storage($this->credentials));
 
-		$deploy->setBaseDir($this->baseDir);
-		
-		$deploy->snyc();
+			$deploy->setBaseDir($this->baseDir);
+			
+			$deploy->snyc();
+		}catch(\Exception $e) {
+			// convert the exception
+			throw new BuildException($e->getMessage(), $this->getLocation());
+		}
 
 	}
 
