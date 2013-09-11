@@ -6,6 +6,7 @@ namespace KevBaldwyn\GitDeploy\Providers;
 
 use \KevBaldwyn\GitDeploy\Deploy;
 use \KevBaldwyn\GitDeploy\Providers\AutomatedCli;
+use \KevBaldwyn\GitDeploy\Providers\S3Storage;
 
 /**
  * 1) git ls-remote
@@ -31,17 +32,20 @@ class Phng {
 	private $credentials;
 
 
-	public function setOldRevision($v) {
+	public function setOldRevision($v) 
+	{
 		$this->oldRevision = $v;
 	}
 
 
-	public function setNewRevision($v) {
+	public function setNewRevision($v) 
+	{
 		$this->newRevision = $v;
 	}
 
 
-	public function setBaseDir($v) {
+	public function setBaseDir($v) 
+	{
 		$this->baseDir = $v;
 	}
 
@@ -51,7 +55,8 @@ class Phng {
 	 * <property name="credntials[secret]" value="123456789" />
 	 * <taskname credntials="${credntials}" />
 	 */
-	public function setCredentials($v) {
+	public function setCredentials($v) 
+	{
 		$this->credentials = $v;
 	}
 
@@ -61,23 +66,28 @@ class Phng {
 	 * <property name="paths[local]" value="remote" />
 	 * <taskname paths="${paths}" />
 	 */
-	public function setPaths($v) {
+	public function setPaths($v) 
+	{
 		$this->paths;
 	}
 
 
-	public function main() {
+	public function main() 
+	{
 		if (!$this->oldRevision || !$this->newRevision) {
 			throw new BuildException("You must specify the old revision and new revisions", $this->getLocation());
 		}
 		if (!$this->baseDir) {
 			throw new BuildException("You must specify the base dir for the files", $this->getLocation());
 		}
+		if (!$this->paths) {
+			throw new BuildException("You must specify the base path mappings", $this->getLocation());
+		}
 
 		try {
 			$deploy = new Deploy(new AutomatedCli($this->oldRevision, $this->newRevision), 
 								 $this->paths, 
-								 new KevBaldwyn\GitDeploy\Providers\S3Storage($this->credentials));
+								 new S3Storage($this->credentials));
 
 			$deploy->setBaseDir($this->baseDir);
 			
