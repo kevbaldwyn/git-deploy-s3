@@ -110,7 +110,7 @@ class Deploy {
 		$cmdOutput = $this->cli->diff($this->oldRevision, $this->newRevision);
 	
 		if (is_null($cmdOutput)) {
-			throw new \Exception('There was a problem executing the command.');
+			throw new \Exception('There was a problem executing the command [' . $this->cli->getLastCommand() . '].');
 		}
 
 		$this->diffRaw = explode("\n", trim($cmdOutput));
