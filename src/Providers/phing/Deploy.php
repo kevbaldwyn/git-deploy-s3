@@ -12,6 +12,7 @@ class Deploy extends Task {
 	
 	private $oldRevision;
 	private $newRevision;
+	private $ensureBranch;
 	private $baseDir;
 	private $paths;
 
@@ -54,6 +55,12 @@ class Deploy extends Task {
 	}
 
 
+	public function setEnsureBranch($v)
+	{
+		$this->ensureBranch = $v;
+	}
+
+
 	public function main() 
 	{
 		if (!$this->oldRevision || !$this->newRevision) {
@@ -69,12 +76,22 @@ class Deploy extends Task {
 			throw new BuildException("You must specify the login credentials for the storage interface", $this->getLocation());
 		}
 
+
+		$cli = new AutomatedCli($this->oldRevision, $this->newRevision);
+		
+		if(!is_null($this->ensureBranch)) {
+			$currentBranch = $cli->currentBranch();
+			if($currentBranch != $this->ensureBranch) {
+				throw new BuildException('Current branch (' . $currentBranch . ') does not match specified branch (' . $this->ensureBranch . ')', $this->getLocation());
+			}
+		}
+
 		try {
-			$deploy = new Deployer(new AutomatedCli($this->oldRevision, $this->newRevision), 
+
+			$deploy = new Deployer($cli, 
 								 $this->paths, 
 								 new S3Storage($this->credentials));
-			var_dump($deploy->getDiff());
-			die();
+
 			$deploy->setBaseDir($this->baseDir);
 			
 			$deploy->snyc();

@@ -57,9 +57,22 @@ class Cli {
 			return false;
 		}
 
-		
 	}
 
+
+	public function currentBranch() 
+	{
+		$status = $this->parseOutput($this->run("git status"));
+		if($status) {
+			if(preg_match("/^#\sOn\sbranch\s(.*)/", $status[0], $matches)) {
+				return trim($matches[1]);
+			}else{
+				throw new \Exception('No branch information found.');
+			}
+		}else{
+			return false;
+		}
+	}
 
 
 	public function getLastCommand() 
