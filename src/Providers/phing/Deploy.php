@@ -1,28 +1,14 @@
-<?php 
+<?php
+
 require_once 'phing/Task.php';
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
-namespace KevBaldwyn\GitDeploy\Providers;
-
-use \KevBaldwyn\GitDeploy\Deploy;
+use \KevBaldwyn\GitDeploy\Deploy as Deployer;
 use \KevBaldwyn\GitDeploy\Providers\AutomatedCli;
 use \KevBaldwyn\GitDeploy\Providers\S3Storage;
 
-/**
- * 1) git ls-remote
- *
- * Outputs:
- * From git@github.com:kevbaldwyn/git-deploy-s3.git
- * b9d4be453fadf401ac5c26862a078903c8b27629	HEAD
- * b9d4be453fadf401ac5c26862a078903c8b27629	refs/heads/master
- *
- * 2) git rev-parse HEAD
- * Outputs an sha hash: e813f58c785ad9530818d52d2982b3ca3d52ae82
- * which can be used to pass the arguments to the deployer
- * 
- * # git diff --name-status e813f58c785ad9530818d52d2982b3ca3d52ae82 b9d4be453fadf401ac5c26862a078903c8b27629
- */
-class Phng {
+
+class Deploy extends Task {
 	
 	private $oldRevision;
 	private $newRevision;
@@ -51,24 +37,20 @@ class Phng {
 
 
 	/**
-	 * <property name="credntials[key]" value="12345" />
-	 * <property name="credntials[secret]" value="123456789" />
-	 * <taskname credntials="${credntials}" />
+	 * <taskname credntials="key=value,secret=value" />
 	 */
 	public function setCredentials($v) 
 	{
-		$this->credentials = $v;
+		$this->credentials = $this->propertyToArray($v);
 	}
 
 
 	/**
-	 * <property name="paths[local]" value="remote" />
-	 * <property name="paths[local]" value="remote" />
-	 * <taskname paths="${paths}" />
+	 * <taskname paths="local/path=bucket/path,local/otherpath=bucket/otherpath" />
 	 */
 	public function setPaths($v) 
 	{
-		$this->paths;
+		$this->paths = $this->propertyToArray($v);
 	}
 
 
@@ -80,15 +62,19 @@ class Phng {
 		if (!$this->baseDir) {
 			throw new BuildException("You must specify the base dir for the files", $this->getLocation());
 		}
-		if (!$this->paths) {
+		if (!is_array($this->paths)) {
 			throw new BuildException("You must specify the base path mappings", $this->getLocation());
+		}
+		if (!is_array($this->credentials)) {
+			throw new BuildException("You must specify the login credentials for the storage interface", $this->getLocation());
 		}
 
 		try {
-			$deploy = new Deploy(new AutomatedCli($this->oldRevision, $this->newRevision), 
+			$deploy = new Deployer(new AutomatedCli($this->oldRevision, $this->newRevision), 
 								 $this->paths, 
 								 new S3Storage($this->credentials));
-
+			var_dump($deploy->getDiff());
+			die();
 			$deploy->setBaseDir($this->baseDir);
 			
 			$deploy->snyc();
@@ -97,6 +83,18 @@ class Phng {
 			throw new BuildException($e->getMessage(), $this->getLocation());
 		}
 
+	}
+
+
+	private function propertyToArray($string) 
+	{
+		$return = array();
+		$values = explode(',', $string);
+		foreach($values as $value) {
+			list($k, $v) = explode('=', trim($value));
+			$return[trim($k)] = trim($v);
+		}
+		return $return;
 	}
 
 }
