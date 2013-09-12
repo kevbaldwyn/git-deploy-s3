@@ -36,8 +36,6 @@ class Deploy {
 	}
 	
 
-
-	// git-s3-deploy post <oldrev> <newrev>
 	public function post() 
 	{
 		if(count($this->diff['upload']) > 0) {
@@ -51,7 +49,6 @@ class Deploy {
 	}
 
 
-	// git-s3-deploy delete <oldrev> <newrev>
 	public function delete() 
 	{
 		if(count($this->diff['delete']) > 0) {
@@ -65,7 +62,6 @@ class Deploy {
 	}
 
 
-	// git-s3-deploy sync <oldrev> <newrev>
 	public function snyc() 
 	{
 		if($this->delete() || $this->post()) {
@@ -79,7 +75,6 @@ class Deploy {
 	{
 		$success = false;
 		try {
-			//$this->storage->setLocalPaths($this->paths, $this->baseDir);
 			$this->storage->send();
 
 			$success = $this->storage->successful();
@@ -129,19 +124,15 @@ class Deploy {
 				$file = $matches[2];
 				foreach($this->paths as $path => $remote_path) {
 					$regex = '^' . preg_quote($path, '@');
-					//$is_dir = is_dir($path);
-					//if(!$is_dir) {
-						//$regex .= '$'; 
-					//}
-					//var_dump($regex);
-					if(!preg_match('@' . $regex . '@', $file )) continue; 
 
-					//if($is_dir) {
-						$_path = preg_replace('@^' . $path . '@', '', $file);
-						$remote_path = $remote_path . '/' . ltrim( $_path, '/');
-					//}
+					if(!preg_match('@' . $regex . '@', $file )) {
+						continue;
+					} 
 
-					if('D' == $flag) {
+					$_path = preg_replace('@^' . $path . '@', '', $file);
+					$remote_path = $remote_path . '/' . ltrim( $_path, '/');
+
+					if($flag == 'D') {
 						$diff['delete'][$file] = $remote_path;
 					}else {
 						$diff['upload'][$file] = $remote_path;
