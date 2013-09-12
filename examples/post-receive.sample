@@ -20,15 +20,5 @@ if [ "$refname" != "refs/heads/master" ]; then
     exit;   
 fi
 
-PUBLIC_HTML="$HOME/public_html"
-cd $PUBLIC_HTML || exit
-unset GIT_DIR
-
-echo -n "Deploying assets to S3..."
-
-$HOME/git-deploy-s3/git-deploy-s3 $oldrev $newrev
-
-echo "done."
-
-exec git-update-server-info
+# incomplete - need to write a default command line interface / script
 

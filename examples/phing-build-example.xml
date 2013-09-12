@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<project name="Example" default="gitdeploy" basedir=".">
+
+	<taskdef name="gitdeploy" classname="vendor.kevbaldwyn.git-deploy-s3.src.Providers.Phing.Deploy" />
+	<taskdef name="gitcurrent" classname="vendor.kevbaldwyn.git-deploy-s3.src.Providers.Phing.GetCommits" />
+
+	<target name="gitdeploy">
+		<gitcurrent outputPropertyLocal="commit.local" outputPropertyRemote="commit.remote" />
+		<echo message="Deploying assets to local storage using git diff (local: ${commit.local}, remote: ${commit.remote})..." />
+		<gitdeploy 
+			paths="assets/css=bucketname/css,assets/js=bucketname/js"
+			credentials="key=key,secret=secret"
+			baseDir="/webroot/path/"
+			oldRevision="${commit.remote}"
+			newRevision="${commit.local}"
+		/>
+	</target>
+</project>
