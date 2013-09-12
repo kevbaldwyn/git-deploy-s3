@@ -1,9 +1,9 @@
 <?php namespace KevBaldwyn\GitDeploy\Providers;
 
 use KevBaldwyn\GitDeploy\Cli as GitDeployCli;
-use KevBaldwyn\GitDeploy\Interfaces\CliInterface;
+use KevBaldwyn\GitDeploy\Interfaces\CliInterface as Cli;
 
-class AutomatedCli extends GitDeployCli implements CliInterface {
+class AutomatedCli extends GitDeployCli implements Cli {
 
 	private $oldRev;
 	private $newRev;

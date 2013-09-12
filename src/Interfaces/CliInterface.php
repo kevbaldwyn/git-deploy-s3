@@ -1,4 +1,4 @@
-<?php namespace KevBaldwyn\Interfaces;
+<?php namespace KevBaldwyn\GitDeploy\Interfaces;
 
 interface CliInterface {
 

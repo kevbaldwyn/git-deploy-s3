@@ -17,7 +17,7 @@ class Deploy {
 	private $baseDir = '';
 
 
-	public function __construct(CliInterface $cli, array $paths, BatchStorageInterface $storage) 
+	public function __construct(Interfaces\CliInterface $cli, array $paths, Interfaces\BatchStorageInterface $storage) 
 	{
 		$this->cli     = $cli;
 		$this->storage = $storage;
