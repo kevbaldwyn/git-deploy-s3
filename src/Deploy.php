@@ -25,8 +25,6 @@ class Deploy {
 
 		$this->getRevisions();
 		$this->diff = $this->getDiff();
-		var_dump($this->diffRaw);
-		var_dump($this->diff);
 	}
 
 	
@@ -107,7 +105,7 @@ class Deploy {
 		if (is_null($cmdOutput)) {
 			throw new \Exception('There was a problem executing the command [' . $this->cli->getLastCommand() . '].');
 		}
-		var_dump($cmdOutput);
+
 		$this->diffRaw = explode("\n", trim($cmdOutput));
 		return $this->parseDiff();
 	}

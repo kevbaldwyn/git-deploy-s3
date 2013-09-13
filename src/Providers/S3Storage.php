@@ -97,7 +97,7 @@ class S3Storage implements BatchStorageInterface {
 
 	public function batchDelete()
 	{
-		if(count($this->upload) > 0) {
+		if(count($this->delete) > 0) {
 			foreach($this->delete as $bucket => $files) {
 				$delete = DeleteObjectsBatch::factory($this->client, $bucket);
 				foreach($files as $file) {
