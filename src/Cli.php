@@ -10,7 +10,7 @@ class Cli {
 	public function diff($oldRevision, $newRevision) 
 	{	
 		$fetch = $this->run("git fetch");
-		if($fetch) {
+		if(!is_null($fetch)) {
 			return $this->run("git diff --name-status " . $newRevision . " " . $oldRevision);
 		}
 		return false;
@@ -33,9 +33,9 @@ class Cli {
 	public function currentState() 
 	{
 		$lsRemote = $this->parseOutput($this->run("git ls-remote"));
-		if($lsRemote) {
+		if(!is_null($lsRemote)) {
 			$branch = $this->currentBranch();
-			if($branch) {
+			if(!is_null($branch)) {
 
 				foreach($lsRemote as $branchDetail) {
 					if(preg_match("/([A-Za-z0-9]*)\s*(.*)/", $branchDetail, $matches)) {
@@ -79,7 +79,7 @@ class Cli {
 		}
 
 		$status = $this->parseOutput($this->run("git status"));
-		if($status) {
+		if(!is_null($status)) {
 			if(preg_match("/^#\sOn\sbranch\s(.*)/", $status[0], $matches)) {
 				$this->currentBranch = trim($matches[1]);
 				return $this->currentBranch;
@@ -110,7 +110,7 @@ class Cli {
 		if(!is_null($output)) {
 			return explode("\n", $output);
 		}
-		return false;
+		return null;
 	}
 
 
