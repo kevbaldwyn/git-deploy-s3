@@ -8,8 +8,13 @@ class Cli {
 
 
 	public function diff($oldRevision, $newRevision) 
-	{
-		return $this->run("git diff --name-status " . $newRevision . " " . $oldRevision);
+	{	
+		$fetch = $this->run("git fetch");
+		if($fetch) {
+			return $this->run("git diff --name-status " . $newRevision . " " . $oldRevision);
+		}
+		return false;
+		
 	}
 
 
