@@ -25,7 +25,6 @@ class Deploy {
 
 		$this->getRevisions();
 		$this->diff = $this->getDiff();
-
 	}
 
 	
@@ -103,7 +102,6 @@ class Deploy {
 	public function getDiff() 
 	{
 		$cmdOutput = $this->cli->diff($this->oldRevision, $this->newRevision);
-	
 		if (is_null($cmdOutput)) {
 			throw new \Exception('There was a problem executing the command [' . $this->cli->getLastCommand() . '].');
 		}
@@ -132,7 +130,9 @@ class Deploy {
 					$_path = preg_replace('@^' . $path . '@', '', $file);
 					$remote_path = $remote_path . '/' . ltrim( $_path, '/');
 
-					if($flag == 'D') {
+					// as this is the result of a git diff command we must inverse the flags
+					// so a "D" becomes an "A"
+					if($flag == 'A') {
 						$diff['delete'][$file] = $remote_path;
 					}else {
 						$diff['upload'][$file] = $remote_path;

@@ -2,12 +2,14 @@
 
 class Cli {
 
-	private $lastCommand = '';
+	protected $currentBranch;
+
+	protected $lastCommand = '';
 
 
 	public function diff($oldRevision, $newRevision) 
 	{
-		return $this->run("git diff --name-status " . $oldRevision . " " . $newRevision);
+		return $this->run("git diff --name-status " . $newRevision . " " . $oldRevision);
 	}
 
 
@@ -27,30 +29,35 @@ class Cli {
 	{
 		$lsRemote = $this->parseOutput($this->run("git ls-remote"));
 		if($lsRemote) {
-			foreach($lsRemote as $branchDetail) {
-				if(preg_match("/([A-Za-z0-9]*)\s*(.*)/", $branchDetail, $matches)) {
-					$commitId = $matches[1];
-					$branchRef = $matches[2];
-					if($branchRef == 'HEAD') {
-						$commits['remote'] = $commitId;
+			$branch = $this->currentBranch();
+			if($branch) {
+
+				foreach($lsRemote as $branchDetail) {
+					if(preg_match("/([A-Za-z0-9]*)\s*(.*)/", $branchDetail, $matches)) {
+						$commitId = $matches[1];
+						$branchRef = $matches[2];
+						if($branchRef == 'refs/heads/' . $branch) {
+							$commits['remote'] = $commitId;
+						}
 					}
 				}
-			}
 
-			$localHead = $this->run("git rev-parse HEAD");
-			$commits['local'] = $localHead;
-			if(!$localHead) {
-				return false;
+				$localHead = $this->run("git rev-parse HEAD");
+				$commits['local'] = $localHead;
+				if(!$localHead) {
+					return false;
+				}
+
 			}
 
 			if(count($commits) == 2) {
 				return $commits;
 			}else{
 				if(!array_key_exists('local', $commits)) {
-					throw new \Exception('No remote HEAD found');
+					throw new \Exception('No local HEAD found');
 				}
 				if(!array_key_exists('remote', $commits)) {
-					throw new \Exception('No local HEAD found');
+					throw new \Exception('No remote branch ' . $branch . ' found');
 				}
 			}
 		}else{
@@ -62,10 +69,15 @@ class Cli {
 
 	public function currentBranch() 
 	{
+		if($this->currentBranch) {
+			return $this->currentBranch;
+		}
+
 		$status = $this->parseOutput($this->run("git status"));
 		if($status) {
 			if(preg_match("/^#\sOn\sbranch\s(.*)/", $status[0], $matches)) {
-				return trim($matches[1]);
+				$this->currentBranch = trim($matches[1]);
+				return $this->currentBranch;
 			}else{
 				throw new \Exception('No branch information found.');
 			}
