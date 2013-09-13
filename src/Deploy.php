@@ -25,6 +25,8 @@ class Deploy {
 
 		$this->getRevisions();
 		$this->diff = $this->getDiff();
+		var_dump($this->diffRaw);
+		var_dump($this->diff);
 	}
 
 	
