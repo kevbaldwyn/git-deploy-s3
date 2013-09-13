@@ -7,6 +7,11 @@
 
 	<target name="gitdeploy">
 		<gitcurrent outputPropertyLocal="commit.local" outputPropertyRemote="commit.remote" />
+		<exec
+			command="git pull"
+			outputProperty="git.response"
+		/>
+		<echo message="${git.response}" />
 		<echo message="Deploying assets to local storage using git diff (local: ${commit.local}, remote: ${commit.remote})..." />
 		<gitdeploy 
 			paths="assets/css=bucketname/css,assets/js=bucketname/js"
