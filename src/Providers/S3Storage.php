@@ -125,7 +125,7 @@ class S3Storage implements BatchStorageInterface {
 				$ok ++;
 			}
 		}
-		if($this->expectedTransfers != $ok) {
+		if($this->expectedTransfers > $ok) {
 			$this->responseMsg = 'Some files weren\'t synced: (' . $ok . ' / ' . $this->expectedTransfers . ' ok).';
 			return false;
 		}
