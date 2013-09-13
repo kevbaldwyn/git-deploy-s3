@@ -9,12 +9,7 @@ class Cli {
 
 	public function diff($oldRevision, $newRevision) 
 	{	
-		$fetch = $this->run("git fetch");
-		if(!is_null($fetch)) {
-			return $this->run("git diff --name-status " . $newRevision . " " . $oldRevision);
-		}
-		return false;
-		
+		return $this->run("git diff --name-status " . $newRevision . " " . $oldRevision);
 	}
 
 
@@ -32,6 +27,7 @@ class Cli {
 	 */
 	public function currentState() 
 	{
+		$fetch = $this->run("git fetch");
 		$lsRemote = $this->parseOutput($this->run("git ls-remote"));
 		if(!is_null($lsRemote)) {
 			$branch = $this->currentBranch();
