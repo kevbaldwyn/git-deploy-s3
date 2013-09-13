@@ -121,6 +121,7 @@ class S3Storage implements BatchStorageInterface {
 	{
 		$ok = 0;
 		foreach($this->responses as $code) {
+			var_dump($code);
 			if($code == 200) {
 				$ok ++;
 			}
