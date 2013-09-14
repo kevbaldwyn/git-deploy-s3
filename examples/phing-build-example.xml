@@ -12,7 +12,7 @@
 		<gitcurrent outputPropertyLocal="commit.local" outputPropertyRemote="commit.remote" />
 		<if>
 			<not>
-				<equals arg1="${commit.local}" arg2="${commit.remote}" />
+				<equals arg1="${commit.local}" arg2="${commit.remote}" trim="true" />
 			</not>
 			<then>
 				<echo message="Deploying assets to local storage using git diff (local: ${commit.local}, remote: ${commit.remote})..." />

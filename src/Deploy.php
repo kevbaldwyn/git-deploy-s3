@@ -94,8 +94,8 @@ class Deploy {
 	private function getRevisions() 
 	{
 		$revs = $this->cli->getRevisions();
-		$this->oldRevision = $revs[0];
-		$this->newRevision = $revs[1];
+		$this->oldRevision = trim($revs[0]);
+		$this->newRevision = trim($revs[1]);
 	}
 
 
