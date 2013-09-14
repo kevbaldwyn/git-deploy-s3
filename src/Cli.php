@@ -9,7 +9,7 @@ class Cli {
 
 	public function diff($oldRevision, $newRevision) 
 	{	
-		return $this->run("git diff --name-status " . $newRevision . " " . $oldRevision);
+		return $this->run("git diff --name-status " . $oldRevision . " " . $newRevision);
 	}
 
 

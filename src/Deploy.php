@@ -134,7 +134,7 @@ class Deploy {
 
 					// as this is the result of a git diff command we must inverse the flags
 					// so a "D" becomes an "A"
-					if($flag == 'A') {
+					if($flag == 'D') {
 						$diff['delete'][$file] = $remote_path;
 					}else {
 						$diff['upload'][$file] = $remote_path;
