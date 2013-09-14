@@ -6,19 +6,31 @@
 	<taskdef name="gitcurrent" classname="vendor.kevbaldwyn.git-deploy-s3.src.Providers.Phing.GetCommits" />
 
 	<target name="gitdeploy">
+		<property name="domain" value="" override="true" />
+		<property name="branch" value="" override="true" />
+		<echo message="Deploying root asset path /var/www/${domain}/ and branch ${branch}" />
 		<gitcurrent outputPropertyLocal="commit.local" outputPropertyRemote="commit.remote" />
-		<exec
-			command="git pull"
-			outputProperty="git.response"
-		/>
-		<echo message="${git.response}" />
-		<echo message="Deploying assets to local storage using git diff (local: ${commit.local}, remote: ${commit.remote})..." />
-		<gitdeploy 
-			paths="assets/css=bucketname/css,assets/js=bucketname/js"
-			credentials="key=key,secret=secret"
-			baseDir="/webroot/path/"
-			oldRevision="${commit.remote}"
-			newRevision="${commit.local}"
-		/>
+		<if>
+			<not>
+				<equals arg1="${commit.local}" arg2="${commit.remote}" />
+			</not>
+			<then>
+				<echo message="Deploying assets to local storage using git diff (local: ${commit.local}, remote: ${commit.remote})..." />
+				<exec
+					command="git pull"
+					outputProperty="git.response"
+				/>
+				<echo message="${git.response}" />
+				<gitdeploy 
+					paths="assets/css=bucketname/css,assets/js=bucketname/js"
+					credentials="key=key,secret=secret"
+					baseDir="/var/www/${domain}/"
+					oldRevision="${commit.local}"
+					newRevision="${commit.remote}"
+					ensureBranch="${branch}"
+				/>
+			</then>
+		</if>
 	</target>
+
 </project>
