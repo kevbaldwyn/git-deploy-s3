@@ -62,7 +62,7 @@ class Deploy extends Task {
 		$this->ensureBranch = $v;
 	}
 
-	// withFiles="type.1=upload,local.1=public/assets/build/css/styles.css,remote.1=funeralzone-test/assets/build/css/styles.css,type.2=upload,local.2=public/assets/build/js/site.js,remote.2=funeralzone-test/assets/build/js/site.js"
+
 	public function setWithFiles($v)
 	{
 		$tmp = $this->propertyToArray($v);
