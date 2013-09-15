@@ -33,6 +33,13 @@ class Deploy {
 		$this->baseDir = $baseDir;
 		$this->storage->setBaseDir($baseDir);
 	}
+
+
+	public function addFile($local, $remote, $which) 
+	{
+		$method = ($which == 'delete') ? 'deleteObject' : 'createObject';
+		$this->storage->{$method}($this->baseDir . $local, $remote);
+	}
 	
 
 	public function post() 

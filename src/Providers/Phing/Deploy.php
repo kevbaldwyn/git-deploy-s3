@@ -18,6 +18,8 @@ class Deploy extends Task {
 
 	private $credentials;
 
+	private $additionalFiles;
+
 
 	public function setOldRevision($v) 
 	{
@@ -60,6 +62,18 @@ class Deploy extends Task {
 		$this->ensureBranch = $v;
 	}
 
+	// withFiles="type.1=upload,local.1=public/assets/build/css/styles.css,remote.1=funeralzone-test/assets/build/css/styles.css,type.2=upload,local.2=public/assets/build/js/site.js,remote.2=funeralzone-test/assets/build/js/site.js"
+	public function setWithFiles($v)
+	{
+		$tmp = $this->propertyToArray($v);
+		$files = array();
+		foreach($tmp as $key => $value) {
+			$keys = explode('.', $key);
+			$files[$keys[1]][$keys[0]] = $value;
+		}
+		$this->additionalFiles = $files;
+	}
+
 
 	public function main() 
 	{
@@ -94,6 +108,12 @@ class Deploy extends Task {
 
 			$deploy->setBaseDir($this->baseDir);
 			
+			if(is_array($this->additionalFiles)) {
+				foreach($this->additionalFiles as $array) {
+					$deploy->addFile($array['local'], $array['remote'], $array['type']);
+				}
+			}
+
 			$deploy->snyc();
 		}catch(\Exception $e) {
 			// convert the exception
